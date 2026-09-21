@@ -58,7 +58,7 @@ export default function SidebarRight(props) {
     },
     {
       name: "whatsapp",
-      url: "https://chat.whatsapp.com/LPZZpsamWun0FOmW7YATza",
+      url: "https://chat.whatsapp.com/CEJUoE9PeId7yzNsEF5eLH",
     },
   ];
 
