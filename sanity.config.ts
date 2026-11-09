@@ -19,6 +19,7 @@ import { media } from "sanity-plugin-media";
 import { linkField } from "sanity-plugin-link-field";
 import "./lib/sanity/custom.css";
 import { pages } from "@tinloof/sanity-studio";
+import { commentCascadeDelete } from "./lib/sanity/plugins/commentCascadeDelete";
 
 export const PREVIEWABLE_DOCUMENT_TYPES: string[] = ["post"];
 
@@ -36,6 +37,7 @@ export default defineConfig({
       // defaultDocumentNode: previewDocumentNode({ apiVersion, previewSecretId }),
     }),
     singletonPlugin(["settings"]),
+    commentCascadeDelete(),
     visionTool(),
     unsplashImageAsset(),
     table(),
