@@ -16,12 +16,15 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: "Missing postId" }, { status: 400 });
     }
 
-    const post = await client.getDocument(postId);
-    const newLikes = (post.likes || 0) + 1;
+    // One atomic request: Sanity increments the counter itself, so it is
+    // faster (no separate read) and simultaneous likes are never lost.
+    const post = await client
+      .patch(postId)
+      .setIfMissing({ likes: 0 })
+      .inc({ likes: 1 })
+      .commit();
 
-    await client.patch(postId).set({ likes: newLikes }).commit();
-
-    return NextResponse.json({ success: true, likes: newLikes }, { status: 200 });
+    return NextResponse.json({ success: true, likes: post.likes }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

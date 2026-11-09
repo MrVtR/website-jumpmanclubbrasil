@@ -20,18 +20,16 @@ export async function POST(req) {
       );
     }
 
-    // Fetch current views
-    const post = await client.getDocument(postId);
-    const currentViews = post?.viewCount || 0;
-
-    // Update the views count in Sanity
-    await client
+    // One atomic request: Sanity increments the counter itself, so it is
+    // faster (no separate read) and simultaneous views are never lost.
+    const post = await client
       .patch(postId)
-      .set({ viewCount: currentViews + 1 })
+      .setIfMissing({ viewCount: 0 })
+      .inc({ viewCount: 1 })
       .commit();
 
     return NextResponse.json(
-      { viewCount: currentViews + 1 },
+      { viewCount: post.viewCount },
       { status: 200 }
     );
   } catch (error) {
