@@ -99,7 +99,7 @@ export default function Navbar(props) {
                           items={item.children}
                         />
                       ) : (
-                        <Link
+                        <Link prefetch={false}
                           href={item.href}
                           key={`${item.label}${index}`}
                           className="px-5 py-2 text-sm font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
@@ -112,7 +112,7 @@ export default function Navbar(props) {
                   ))}
                 </div>
                 <div className="flex w-full items-center justify-between md:w-auto">
-                  <Link href="/" className="w-28 dark:hidden">
+                  <Link prefetch={false} href="/" className="w-28 dark:hidden">
                     {props.logo ? (
                       <Image
                         {...urlForImage(props.logo)}
@@ -126,7 +126,7 @@ export default function Navbar(props) {
                       </span>
                     )}
                   </Link>
-                  <Link href="/" className="hidden w-28 dark:block">
+                  <Link prefetch={false} href="/" className="hidden w-28 dark:block">
                     {props.logoalt ? (
                       <Image
                         {...urlForImage(props.logoalt)}
@@ -174,7 +174,7 @@ export default function Navbar(props) {
                           items={item.children}
                         />
                       ) : (
-                        <Link
+                        <Link prefetch={false}
                           href={item.href}
                           key={`${item.label}${index}`}
                           className="px-5 py-2 text-sm font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
@@ -199,7 +199,7 @@ export default function Navbar(props) {
                           mobile={true}
                         />
                       ) : (
-                        <Link
+                        <Link prefetch={false}
                           href={item.href}
                           key={`${item.label}${index}`}
                           className="w-full px-5 py-2 text-sm font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
@@ -255,7 +255,7 @@ const DropdownMenu = ({ menu, items, mobile }) => {
                 {items.map((item, index) => (
                   <Menu.Item as="div" key={`${item.title}${index}`}>
                     {({ active }) => (
-                      <Link
+                      <Link prefetch={false}
                         href={item?.path ? item.path : "#"}
                         className={cx(
                           "flex items-center space-x-2 px-5 py-2 text-sm lg:space-x-4",

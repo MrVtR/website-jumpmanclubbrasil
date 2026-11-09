@@ -9,7 +9,7 @@ export default function CategoryLabel({
     <div className="flex flex-wrap gap-x-3 gap-y-1 mt-[10px]">
       {categories?.length &&
         categories.slice(0).map((category, index) => (
-          <Link
+          <Link prefetch={false}
             href={`/category/${category.slug.current}`}
             key={index}>
             <Label nomargin="true" color={category.color}>

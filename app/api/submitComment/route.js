@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache"; // ✅ Ensure Next.js refreshes data
 import { createClient } from "@sanity/client";
 import { randomUUID } from "crypto";
 import {
@@ -8,6 +7,11 @@ import {
   normalizeEmail,
   notifyThreadParticipants
 } from "@/lib/commentNotifications";
+import {
+  EmailCryptoConfigError,
+  encryptEmail,
+  hashEmail
+} from "@/lib/emailCrypto";
 
 const client = createClient({
   projectId: process.env.SANITY_STUDIO_PROJECT_ID,
@@ -63,20 +67,34 @@ export async function POST(req) {
       ? await findThreadRootId(client, postId, parent)
       : comment._id;
 
-    // Store the email privately (dot in the _id = not publicly readable).
+    // Store the email privately (dot in the _id = not publicly readable),
+    // encrypted, plus an HMAC for comparisons. Never store it in plaintext.
+    // The comment is already saved: a failure here only means no notifications.
     if (authorEmail) {
-      await client.createOrReplace({
-        _id: `${PRIVATE_EMAIL_PREFIX}${comment._id}`,
-        _type: "commentEmail",
-        email: authorEmail,
-        author,
-        commentId: comment._id,
-        postId,
-        threadId,
-        subscribed: true,
-        unsubscribeToken: randomUUID(),
-        createdAt: comment.createdAt
-      });
+      try {
+        const emailEncrypted = encryptEmail(authorEmail);
+        const emailHash = hashEmail(authorEmail);
+        await client.createOrReplace({
+          _id: `${PRIVATE_EMAIL_PREFIX}${comment._id}`,
+          _type: "commentEmail",
+          emailEncrypted,
+          emailHash,
+          author,
+          commentId: comment._id,
+          postId,
+          threadId,
+          subscribed: true,
+          unsubscribeToken: randomUUID(),
+          createdAt: comment.createdAt
+        });
+      } catch (emailError) {
+        console.error(
+          `Commenter email NOT stored for comment ${comment._id}: ${emailError.message}` +
+            (emailError instanceof EmailCryptoConfigError
+              ? " (set EMAIL_ENCRYPTION_KEY and EMAIL_HASH_KEY in the environment)"
+              : "")
+        );
+      }
     }
 
     // Notify everyone in the thread. A failure here must not fail the comment.
@@ -93,8 +111,6 @@ export async function POST(req) {
         console.error("Error sending comment notifications:", notifyError);
       }
     }
-
-    revalidatePath(`/post/${postId}`);
 
     return NextResponse.json(comment, { status: 201 });
   } catch (error) {

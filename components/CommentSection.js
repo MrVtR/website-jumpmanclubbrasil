@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-export default function CommentSection({ postId, comments }) {
+export default function CommentSection({ postId, comments, onCommentPosted }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [newComment, setNewComment] = useState("");
@@ -38,31 +38,17 @@ export default function CommentSection({ postId, comments }) {
     });
 
     if (res.ok) {
-      const addedComment = await res.json();
-
-      // Update the comment list optimistically
-      let updatedComments = [];
-      if (parentId) {
-        updatedComments = allComments.map((comment) => {
-          if (comment._id === parentId) {
-            return {
-              ...comment,
-              replies: [...(comment.replies || []), addedComment],
-            };
-          }
-          return comment;
-        });
-      } else {
-        updatedComments = [addedComment, ...allComments];
-      }
-
-      // After adding, update all comments and rebuild the nested structure
-      setAllComments(updatedComments);
       setReplyingTo(null);
       setNewComment("");
       setUsername("");
       setEmail("");
-      setNestedComments(buildNestedComments(updatedComments));
+
+      // Reload the comments from the live API so the list always matches the
+      // database (including replies to comments posted in this same session).
+      // The `comments` prop changes and the effect above rebuilds the tree.
+      if (onCommentPosted) {
+        await onCommentPosted();
+      }
 
       // Set the success message
       setSuccessMessage("Comentário publicado com sucesso!");
@@ -165,7 +151,7 @@ export default function CommentSection({ postId, comments }) {
           maxLength={254}
         />
         <p className="mb-2 mt-1 text-xs text-gray-500">
-          Seu e-mail não será publicado. Ele é usado apenas para avisar você quando alguém responder a esta conversa.
+          Seu e-mail não será publicado. Ele é usado apenas para avisar você quando alguém responder o seu comentário.
         </p>
         <textarea
           value={newComment}

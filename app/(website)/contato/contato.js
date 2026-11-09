@@ -75,7 +75,7 @@ export default function Contact({ settings }) {
             pelo Discord para podermos entrar em contato com você!
           </p>
           <div className="mt-5 flex justify-center">
-            <Link
+            <Link prefetch={false}
               href="https://docs.google.com/forms/d/1v0sva35cXU8wZfte80R_DQfpdqU8tkbulxW1H4z5fx8/viewform?edit_requested=true"
               className="relative inline-flex items-center gap-1 rounded-2xl border border-gray-300 bg-white px-3 py-2 pl-4 text-sm font-medium text-gray-500 hover:bg-gray-300 focus:z-20 disabled:pointer-events-none disabled:opacity-40 dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-300 dark:hover:text-gray-500"
               target="_blank"

@@ -6,7 +6,7 @@ import { PortableText } from "@/lib/sanity/plugins/portabletext";
 import { urlForImage } from "@/lib/sanity/image";
 import { parseISO, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // ✅ Correct import
 import CategoryLabel from "@/components/blog/category";
 import AuthorCard from "@/components/blog/authorCard";
@@ -51,20 +51,22 @@ export default function Post(props) {
   const [loading, setLoading] = useState(true);
 
   const [comments, setComments] = useState([]);
+
+  // Fetches comments from the live Sanity API (no cache). Also called by
+  // CommentSection after a new comment is published.
+  const fetchComments = useCallback(async () => {
+    try {
+      const fetchedComments = await getCommentsByPostId(post._id);
+      setComments(fetchedComments);
+    } catch (error) {
+      console.error("Failed to fetch comments:", error);
+    }
+  }, [post._id]);
+
   // ✅ Fetch comments dynamically on component mount
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const fetchedComments = await getCommentsByPostId(post._id);
-        console.log(fetchedComments);
-        setComments(fetchedComments);
-      } catch (error) {
-        console.error("Failed to fetch comments:", error);
-      }
-    };
-
     fetchComments();
-  }, [post._id]); // ✅ Depend on post ID to trigger fetch
+  }, [fetchComments]); // ✅ Re-fetch when the post changes
 
   useEffect(() => {
     const updateViews = async () => {
@@ -117,7 +119,7 @@ export default function Post(props) {
             <div className="flex items-center gap-3">
               <div className="relative h-10 w-10 flex-shrink-0">
                 {AuthorimageProps && (
-                  <Link href={`/author/${post.author.slug.current}`}>
+                  <Link prefetch={false} href={`/author/${post.author.slug.current}`}>
                     <Image
                       src={AuthorimageProps.src}
                       alt={post?.author?.name}
@@ -130,7 +132,7 @@ export default function Post(props) {
               </div>
               <div>
                 <p className="text-gray-800 dark:text-gray-400">
-                  <Link href={`/author/${post.author.slug.current}`}>
+                  <Link prefetch={false} href={`/author/${post.author.slug.current}`}>
                     {post.author.name}
                   </Link>
                 </p>
@@ -242,7 +244,7 @@ export default function Post(props) {
             </div>
           </div>
           <div className="mt-10 flex justify-center">
-            <Link
+            <Link prefetch={false}
               href="/"
               className="relative inline-flex items-center gap-1 rounded-2xl border border-gray-300 bg-white px-3 py-2 pl-4 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20 disabled:pointer-events-none disabled:opacity-40 dark:border-gray-500 dark:bg-gray-800 dark:text-gray-300"
             >
@@ -252,7 +254,11 @@ export default function Post(props) {
           {post.author && <AuthorCard author={post.author} />}
         </article>
       </Container>
-      <CommentSection postId={post._id} comments={comments} />
+      <CommentSection
+        postId={post._id}
+        comments={comments}
+        onCommentPosted={fetchComments}
+      />
     </div>
   );
 }

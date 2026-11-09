@@ -1,4 +1,5 @@
 import { createClient } from "@sanity/client";
+import { storedEmailHash } from "@/lib/emailCrypto";
 
 const client = createClient({
   projectId: process.env.SANITY_STUDIO_PROJECT_ID,
@@ -21,16 +22,37 @@ async function unsubscribe(token) {
   if (!token) return false;
 
   const sub = await client.fetch(
-    `*[_type == "commentEmail" && unsubscribeToken == $token][0]{ email, threadId }`,
+    `*[_type == "commentEmail" && unsubscribeToken == $token][0]{ _id, emailHash, email, threadId }`,
     { token }
   );
   if (!sub) return false;
 
-  // Unsubscribe this address from the whole thread (all of its comments there).
-  const ids = await client.fetch(
-    `*[_type == "commentEmail" && email == $email && threadId == $threadId]._id`,
-    { email: sub.email, threadId: sub.threadId }
+  // Unsubscribe this person from the whole thread (all of their comments
+  // there). Matching is done by emailHash; legacy docs that still hold a
+  // plaintext `email` get their hash computed on the fly, so legacy and new
+  // docs of the same person are all covered. Nothing is decrypted here.
+  const threadDocs = await client.fetch(
+    `*[_type == "commentEmail" && threadId == $threadId]{ _id, emailHash, email }`,
+    { threadId: sub.threadId }
   );
+
+  let ids;
+  try {
+    const hash = storedEmailHash(sub);
+    ids = threadDocs
+      .filter(d => d._id === sub._id || (hash && storedEmailHash(d) === hash))
+      .map(d => d._id);
+  } catch (hashError) {
+    // Keys missing/invalid: still honour the request as best we can.
+    console.error(`Unsubscribe without email hash: ${hashError.message}`);
+    const plain = sub.email?.trim().toLowerCase();
+    ids = threadDocs
+      .filter(
+        d => d._id === sub._id || (plain && d.email?.trim().toLowerCase() === plain)
+      )
+      .map(d => d._id);
+  }
+
   const tx = client.transaction();
   ids.forEach(id => tx.patch(id, p => p.set({ subscribed: false })));
   await tx.commit();

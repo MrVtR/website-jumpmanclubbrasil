@@ -38,7 +38,10 @@ export const fetcher = async ([query, params]) => {
 
 export async function getAllPosts() {
   if (client) {
-    return client.fetch(postquery, {}, { cache: "no-store" }) || [];
+    // No "no-store" here: it made the home page render on every single visit
+    // (a function call + full HTML transfer each time). It is now cached (ISR)
+    // and refreshed hourly or when a post changes (Sanity webhook).
+    return (await client.fetch(postquery)) || [];
   }
   return [];
 }
@@ -134,9 +137,22 @@ export async function searchPosts(query = "") {
   return [];
 }
 
+/**
+ * Comments must always be fresh: the Sanity API CDN (and the browser) cache
+ * query results for ~60s+, which made newly posted threads temporarily vanish.
+ * Read them from the live API instead of the CDN, and never from a cache.
+ */
+const liveClient = client ? client.withConfig({ useCdn: false }) : null;
+
 export async function getCommentsByPostId(postId) {
-  if (client) {
-    return (await client.fetch(commentsByPostQuery, { postId })) || [];
+  if (liveClient) {
+    return (
+      (await liveClient.fetch(
+        commentsByPostQuery,
+        { postId },
+        { cache: "no-store" }
+      )) || []
+    );
   }
   return [];
 }

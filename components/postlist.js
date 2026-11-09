@@ -55,7 +55,7 @@ export default function PostList({
             display: "inline-block",
           }}
         >
-          <Link
+          <Link prefetch={false}
             className={cx(
               "landscape relative block", // Centers content
               aspect === "landscape"
@@ -96,7 +96,7 @@ export default function PostList({
           <div>
             <CategoryLabel categories={post.categories} nomargin={minimal} />
             <h2 className="mt-2 text-center text-xl font-semibold leading-snug tracking-tight dark:text-white">
-              <Link
+              <Link prefetch={false}
                 href={`/post/${pathPrefix ? `${pathPrefix}/` : ""}${
                   post.slug?.current
                 }`}
@@ -116,7 +116,7 @@ export default function PostList({
             <div className="hidden">
               {post.excerpt && (
                 <p className="mt-2 line-clamp-3 text-sm text-gray-500 dark:text-gray-400">
-                  <Link
+                  <Link prefetch={false}
                     href={`/post/${
                       pathPrefix ? `${pathPrefix}/` : ""
                     }${post.slug?.current}`}
@@ -128,7 +128,7 @@ export default function PostList({
             </div>
 
             <div className=" flex flex-col items-center justify-center gap-2 py-4 text-gray-500 dark:text-gray-400">
-              <Link href={`/author/${post.author?.slug?.current}`}>
+              <Link prefetch={false} href={`/author/${post.author?.slug?.current}`}>
                 <div className="flex items-center justify-center gap-3">
                   <div className="relative h-5 w-5 flex-shrink-0">
                     {post.author?.image && (

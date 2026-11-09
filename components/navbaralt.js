@@ -53,7 +53,7 @@ export default function NavbarAlt(props) {
             <>
               <div className="flex flex-wrap justify-center lg:flex-nowrap">
                 <div className="flex w-full items-center justify-center px-[30px] lg:hidden lg:w-auto">
-                  <Link href="/" className="lg:hidden">
+                  <Link prefetch={false} href="/" className="lg:hidden">
                     {props.logo ? (
                       <Image
                         src={urlForImage(props.logo)}
@@ -111,7 +111,7 @@ export default function NavbarAlt(props) {
                     className="hidden flex-col items-center lg:flex lg:flex-row "
                     style={{ paddingRight: "20px" }}
                   >
-                    <Link href="/">
+                    <Link prefetch={false} href="/">
                       {props.logo ? (
                         <Image
                           src={urlForImage(props.logo)}
@@ -139,7 +139,7 @@ export default function NavbarAlt(props) {
                             mobile={props.mobile}
                           />
                         ) : (
-                          <Link
+                          <Link prefetch={false}
                             href={item.href}
                             key={index + item.label}
                             className="rounded-full text-center font-bold text-gray-600 outline-none ring-blue-100 hover:text-blue-500 focus-visible:text-blue-500 focus-visible:ring-2 dark:text-gray-400 min-[1024px]:text-[12px] min-[1100px]:text-[14px] xl:text-[18px]"
@@ -184,7 +184,7 @@ export default function NavbarAlt(props) {
                           mobile={props.mobile}
                         />
                       ) : (
-                        <Link
+                        <Link prefetch={false}
                           href={item.href}
                           key={index + item.label}
                           className="rounded-full px-5 py-2 text-sm font-medium text-gray-600 outline-none ring-blue-100 hover:text-blue-500 focus-visible:text-blue-500 focus-visible:ring-2 dark:text-gray-400"
@@ -240,7 +240,7 @@ const DropdownMenu = ({ menu, items, mobile }) => {
                 {items.map((item, index) => (
                   <Menu.Item as="div" key={index}>
                     {({ active }) => (
-                      <Link
+                      <Link prefetch={false}
                         href={item?.path ? item.path : "#"}
                         className={cx(
                           "flex items-center space-x-2 px-5 py-2 text-sm lg:space-x-4",

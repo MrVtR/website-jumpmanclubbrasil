@@ -23,7 +23,7 @@ export default function Featured({ post, pathPrefix }) {
       }}>
       {imageProps && (
         <div className="relative aspect-video md:aspect-auto">
-          <Link
+          <Link prefetch={false}
             href={`/post/${pathPrefix ? `${pathPrefix}/` : ""}${
               post.slug.current
             }`}>
@@ -44,7 +44,7 @@ export default function Featured({ post, pathPrefix }) {
       )}
 
       <div className="self-center px-5 pb-10">
-        <Link
+        <Link prefetch={false}
           href={`/post/${pathPrefix ? `${pathPrefix}/` : ""}${
             post.slug.current
           }`}>

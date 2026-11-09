@@ -56,7 +56,7 @@ export default function About() {
           return (
             <div key={index} className="block w-[280px]">
               {author.url ? (
-                <Link href={author.url} className="h-full w-full">
+                <Link prefetch={false} href={author.url} className="h-full w-full">
                   <img src={author.src} alt="" className="h-full w-full" />
                 </Link>
               ) : (
@@ -78,7 +78,7 @@ export default function About() {
         <p>
           Quer traduzir jogos e fazer parte da nossa equipe?
           <br />
-          <Link href="/contato">Entre em contato conosco!</Link>
+          <Link prefetch={false} href="/contato">Entre em contato conosco!</Link>
         </p>
       </div>
       {/* Social Media Section */}

@@ -120,4 +120,8 @@ export default async function Layout({
   );
 }
 
-export const revalidate = 3600;
+// Default for every page of the site: regenerate at most every 12h.
+// Content edits show up right away through the Sanity webhook
+// (/api/revalidate); the home page uses 1h (see app/(website)/page.js).
+// Comments, views and likes are loaded/updated on the client, not from this cache.
+export const revalidate = 43200;
