@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 
 export default function CommentSection({ postId, comments }) {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [allComments, setAllComments] = useState(comments);
@@ -30,6 +31,7 @@ export default function CommentSection({ postId, comments }) {
       body: JSON.stringify({
         postId,
         author: username,
+        email: email.trim() || null, // Stored privately, never shown publicly
         text: newComment,
         parent: parentId || null, // Use parentId passed as argument
       }),
@@ -59,6 +61,7 @@ export default function CommentSection({ postId, comments }) {
       setReplyingTo(null);
       setNewComment("");
       setUsername("");
+      setEmail("");
       setNestedComments(buildNestedComments(updatedComments));
 
       // Set the success message
@@ -152,6 +155,18 @@ export default function CommentSection({ postId, comments }) {
           placeholder="Digite seu nome"
           required
         />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full rounded border p-2"
+          placeholder="Seu e-mail (opcional)"
+          autoComplete="email"
+          maxLength={254}
+        />
+        <p className="mb-2 mt-1 text-xs text-gray-500">
+          Seu e-mail não será publicado. Ele é usado apenas para avisar você quando alguém responder a esta conversa.
+        </p>
         <textarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
