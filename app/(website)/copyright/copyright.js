@@ -16,7 +16,7 @@ export default function Copyright() {
         }}
       >
         <div className="flex flex-col items-center justify-center">
-          <img src="/static/copyright.png" alt="" className="max-w-[370px]" />
+          <img src="/static/copyright.webp" alt="" className="max-w-[370px]" />
           <p className="font-open mb-0 text-justify indent-[35.45pt] text-[20px] leading-[2]">
             Nós da equipe <b>JumpManClub Brasil</b>, somos um grupo autônomo,
             independente e sem fins lucrativos. Todo o nosso trabalho é
@@ -27,7 +27,7 @@ export default function Copyright() {
           </p>
         </div>
         <div className="flex flex-col items-center justify-center">
-          <img src="/static/custos.png" alt="" className="max-w-[370px]" />
+          <img src="/static/custos.webp" alt="" className="max-w-[370px]" />
           <p className="font-open mb-0 text-justify indent-[35.45pt] text-[20px] leading-[2]">
             Como não temos nenhum vínculo com a Nintendo e outras empresas
             oficiais, não podemos cobrar pelo trabalho, pois não possuímos
@@ -56,11 +56,11 @@ export default function Copyright() {
             forma pra você:
           </p>
           <a href="/doacao" className="mt-[16px] max-w-[280px] self-start">
-            <img src="/static/doacao_botao.png" alt="" className="" />
+            <img src="/static/doacao_botao.webp" alt="" className="" />
           </a>
         </div>
         <div className="flex flex-col items-center justify-center">
-          <img src="/static/pirate.png" alt="" className="max-w-[370px]" />
+          <img src="/static/pirate.webp" alt="" className="max-w-[370px]" />
           <p className="font-open mb-0 text-justify indent-[35.45pt] text-[20px] leading-[2]">
             Para acessar os recursos da tradução, o jogador precisa,
             infelizmente, possuir um console desbloqueado, o que não

@@ -23,7 +23,7 @@ const SpinningCoin = () => {
         }}
       >
         <Image
-          src="/static/coin.png"
+          src="/static/coin.webp"
           alt="3D Spinning Coin"
           width={100}
           height={100}

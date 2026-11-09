@@ -41,23 +41,23 @@ export default function Doacao() {
           borderRadius: "15px",
         }}
       >
-        <img src="/static/doeAgora.png" alt="" />
+        <img src="/static/doeAgora.webp" alt="" />
         <br />
         <br />
         <div className="flex flex-col items-center justify-center">
-          <img src="/static/mercado.png" alt="" />
+          <img src="/static/mercado.webp" alt="" />
           <p className="font-open mb-0 text-justify indent-[35.45pt] text-[20px] leading-[2]">
             <b>#MERCADPAGO, Mercado Pago</b> é a carteira digital do Mercado
             Livre. Ele funciona como gestor de vendas em sites de e-commerce,
             carteira digital, permite enviar e receber pagamentos e doações pela
-            internet, Além de funcionar também como um 'banco' que guarda os
+            internet, Além de funcionar também como um &lsquo;banco&rsquo; que guarda os
             ganhos recebidos. Você pode utilizar o seu saldo para realizar
             compras em diversas lojas ou adquirir serviços variados como
             recargas de celular e bilhetes de transporte.
           </p>
           <br />
           <img
-            src="/static/doacao_botao.png"
+            src="/static/doacao_botao.webp"
             alt=""
             className="self-start pb-[30px] pt-[10px]"
           />
@@ -136,7 +136,7 @@ export default function Doacao() {
           </div>
         </div>
         <div className="flex flex-col items-center justify-center">
-          <img src="/static/picpayB.png" alt="" />
+          <img src="/static/picpayB.webp" alt="" />
           <p className="font-open mb-0 text-justify indent-[35.45pt] text-[20px] leading-[2]">
             <b>#PicPay</b> é um aplicativo fintech, disponível para Android e
             iOS que funciona como carteira digital. Ele permite realizar
@@ -150,26 +150,26 @@ export default function Doacao() {
             escanear o nosso QR Code para fazer sua doação!
           </p>
           <img
-            src="/static/doacao_botao.png"
+            src="/static/doacao_botao.webp"
             alt=""
             className="self-start pb-[10px] pt-[10px]"
           />
           <br />
           <img
-            src="/static/picpay.png"
+            src="/static/picpay.webp"
             alt=""
             className="self-start pt-[10px]"
           />
         </div>
         <div className="flex flex-col items-center justify-center">
-          <img src="/static/bradesco.png" alt="" />
+          <img src="/static/bradesco.webp" alt="" />
           <p className="font-open mb-0 text-justify indent-[35.45pt] text-[20px] leading-[2]">
             <b>#BRADESCO </b>Você pode também fazer depósito de qualquer valor,
             indo a uma agência do banco Bradesco, ou se você já tiver uma conta,
             basta fazer uma transferência online. Utilize os dados abaixo.
           </p>
           <img
-            src="/static/bradescoB.png"
+            src="/static/bradescoB.webp"
             alt=""
             className="self-start pb-[10px] pt-[10px]"
           />
@@ -198,7 +198,7 @@ export default function Doacao() {
           </ul>
         </div>
         <div className="flex flex-col items-center justify-center">
-          <img src="/static/interB.png" alt="" />
+          <img src="/static/interB.webp" alt="" />
           <p className="font-open mb-0 text-justify indent-[35.45pt] text-[20px] leading-[2]">
             <b>#BANCOINTER</b> Banco Inter é uma instituição financeira fundada
             em 1994, que oferece abertura de conta digital sem tarifas aos seus
@@ -209,7 +209,7 @@ export default function Doacao() {
             cobrado para realizar saques em Banco24Horas, por exemplo.
           </p>
           <img
-            src="/static/inter.png"
+            src="/static/inter.webp"
             alt=""
             className="self-start pb-[10px] pt-[10px]"
           />
@@ -238,7 +238,7 @@ export default function Doacao() {
           </ul>
         </div>
         <div className="flex flex-col items-center justify-center">
-          <img src="/static/fique.png" alt="" />
+          <img src="/static/fique.webp" alt="" />
           <p className="font-open mb-0 text-justify indent-[35.45pt] text-[20px] font-bold leading-[2]">
             Lembre-se de sempre entrar em contato conosco através das redes
             sociais, para assim liberarmos seu acesso aos conteúdos exclusivos

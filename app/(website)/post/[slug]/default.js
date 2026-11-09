@@ -7,7 +7,6 @@ import { urlForImage } from "@/lib/sanity/image";
 import { parseISO, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // ✅ Correct import
 import CategoryLabel from "@/components/blog/category";
 import AuthorCard from "@/components/blog/authorCard";
 import { getPostBySlug, getCommentsByPostId } from "@/lib/sanity/client";
@@ -15,27 +14,27 @@ import CommentSection from "@/components/CommentSection";
 
 const STATIC_IMAGES = [
   {
-    src: "/static/image1.png",
+    src: "/static/image1.webp",
     linkKey: "downloadLink1",
     captionKey: "caption1",
   },
   {
-    src: "/static/image2.png",
+    src: "/static/image2.webp",
     linkKey: "downloadLink2",
     captionKey: "caption2",
   },
   {
-    src: "/static/image3.png",
+    src: "/static/image3.webp",
     linkKey: "downloadLink3",
     captionKey: "caption3",
   },
   {
-    src: "/static/image4.png",
+    src: "/static/image4.webp",
     linkKey: "downloadLink4",
     captionKey: "caption4",
   },
   {
-    src: "/static/image5.png",
+    src: "/static/image5.webp",
     linkKey: "downloadLink5",
     captionKey: "caption5",
   },
@@ -45,7 +44,6 @@ export default function Post(props) {
   const { post } = props;
   const slug = post?.slug;
   const [views, setViews] = useState(post.viewCount || 0);
-  const router = useRouter(); // ✅ Corrected import
   const [loadingViews, setLoadingViews] = useState(true); // New loading state for views
 
   const [loading, setLoading] = useState(true);
@@ -68,7 +66,43 @@ export default function Post(props) {
     fetchComments();
   }, [fetchComments]); // ✅ Re-fetch when the post changes
 
+  // Count a view only once per browser session for each post: refreshing or
+  // coming back to the same post doesn't call the API (or write to Sanity) again.
   useEffect(() => {
+    const countedKey = `viewed:${post._id}`;
+    const countKey = `views:${post._id}`;
+    const storage = {
+      get(key) {
+        try {
+          return window.sessionStorage.getItem(key);
+        } catch {
+          return null;
+        }
+      },
+      set(key, value) {
+        try {
+          window.sessionStorage.setItem(key, value);
+        } catch {}
+      },
+      remove(key) {
+        try {
+          window.sessionStorage.removeItem(key);
+        } catch {}
+      },
+    };
+
+    if (storage.get(countedKey)) {
+      // Already counted in this session: show the latest number we know
+      // (the cached page may hold an older count).
+      const known = Number(storage.get(countKey)) || 0;
+      setViews(current => Math.max(current, known));
+      setLoadingViews(false);
+      return;
+    }
+
+    // Mark before the request so a double render can't count twice.
+    storage.set(countedKey, "1");
+
     const updateViews = async () => {
       try {
         const response = await fetch("/api/post/updateViews", {
@@ -81,15 +115,17 @@ export default function Post(props) {
 
         const data = await response.json();
         setViews(data.viewCount);
-        setLoadingViews(false); // Mark as loaded once API response is received
+        storage.set(countKey, String(data.viewCount));
       } catch (error) {
         console.error("Error updating views:", error);
-        setLoadingViews(false); // Set loading to false even if there's an error
+        storage.remove(countedKey); // Not counted: try again next visit
+      } finally {
+        setLoadingViews(false);
       }
     };
 
     updateViews();
-  }, [router.pathname]); // Use the pathname as a dependency to trigger the update
+  }, [post._id]);
 
   const imageProps = post?.mainImage ? urlForImage(post?.mainImage) : null;
 
@@ -201,7 +237,7 @@ export default function Post(props) {
             </div>
             {post.body2 && <PortableText value={post.body2} />}
             {post.downloadLink1 && (
-              <img src="/static/baixar.png" alt="DownloadLabel" />
+              <img src="/static/baixar.webp" alt="DownloadLabel" />
             )}
             <div
               className="grid grid-cols-2 items-center justify-center gap-4"

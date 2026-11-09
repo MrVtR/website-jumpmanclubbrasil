@@ -152,7 +152,7 @@ export default function SidebarRight(props) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <img src="/static/pedido.gif" alt="" />
+        <img src="/static/pedido.webp" alt="" />
       </a>
 
       {/* Top 5 Most Viewed Posts Section */}

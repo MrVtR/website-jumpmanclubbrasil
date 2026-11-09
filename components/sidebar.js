@@ -27,7 +27,7 @@ export default function SidebarLeft(props) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <img src="/static/pedido.gif" alt="" />
+        <img src="/static/pedido.webp" alt="" />
       </a>
     </div>
   );

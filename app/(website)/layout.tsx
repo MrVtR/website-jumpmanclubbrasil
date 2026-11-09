@@ -25,38 +25,70 @@ const lora = Lora({
   variable: "--font-lora"
 });
 
+const SITE_NAME = "JumpmanClub Brasil Traduções";
+const SITE_DESCRIPTION =
+  "Somos a equipe JumpManClub Brasil, um grupo independente de tradução de games! Traduzimos pra PT-BR jogos que nativamente não têm idioma PT-BR, de fã pra fã!";
+
+// Absolute base URL for canonical links and link previews (WhatsApp, Discord...).
+function siteUrl(settings: any) {
+  const url =
+    process.env.SITE_URL ||
+    settings?.url ||
+    "https://www.jumpmanclubbrasil.com.br";
+  try {
+    return new URL(url);
+  } catch {
+    return new URL("https://www.jumpmanclubbrasil.com.br");
+  }
+}
+
 async function sharedMetaData(params: any) {
   const settings = await getSettings();
+  const name = settings?.title || SITE_NAME;
+  const description = settings?.description || SITE_DESCRIPTION;
+  const ogImage = urlForImage(settings?.openGraphImage);
 
   return {
-    // enable this for resolving opengraph images
-    // metadataBase: new URL(settings.url),
+    metadataBase: siteUrl(settings),
     title: {
-      default:
-        settings?.title ||
-        "Stablo Pro - Blog Template for Next.js & Sanity CMS",
-      template: "%s"
+      default: name,
+      // Page titles become "Post title | JumpmanClub Brasil Traduções"
+      template: `%s | ${name}`
     },
-    description:
-      settings?.description ||
-      "Pro version of Stablo, popular open-source next.js and sanity blog template",
-    keywords: ["Next.js", "Sanity", "Tailwind CSS"],
-    authors: [{ name: "Surjith" }],
-    canonical: settings?.url,
+    description,
+    applicationName: name,
+    keywords: [
+      "tradução de jogos",
+      "tradução PT-BR",
+      "jogos em português",
+      "patch de tradução",
+      "tradução de games",
+      "JumpmanClub Brasil"
+    ],
+    authors: [{ name }],
+    creator: name,
+    publisher: name,
+    alternates: { canonical: "/" },
     openGraph: {
+      type: "website",
+      locale: "pt_BR",
+      siteName: name,
+      title: name,
+      description,
+      url: "/",
       images: [
         {
-          url:
-            urlForImage(settings?.openGraphImage)?.src ||
-            "/img/opengraph.jpg",
-          width: 800,
-          height: 600
+          url: ogImage?.src || "/img/opengraph.jpg",
+          width: ogImage?.width || 800,
+          height: ogImage?.height || 600,
+          alt: name
         }
       ]
     },
     twitter: {
-      title: settings?.title || "Stablo Template",
-      card: "summary_large_image"
+      card: "summary_large_image",
+      title: name,
+      description
     },
     robots: {
       index: true,
@@ -79,7 +111,7 @@ export default async function Layout({
   const settings = await getSettings();
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       suppressHydrationWarning
       className={cx(inter.variable, lora.variable,openSans.variable)}>
       <body className="dark:bg-black-800 flex flex-row bg-gray-100 text-gray-800">
@@ -90,7 +122,7 @@ export default async function Layout({
 
             <a href="/" style={{ display: "block", width: "90%" }}>
               <img
-                src="/static/moldura.png"
+                src="/static/moldura.webp"
                 style={{ marginTop: "10px", width: "100%" }}
               />
             </a>
@@ -99,7 +131,7 @@ export default async function Layout({
               <div className="flex h-full max-w-[1030px] flex-col items-center justify-start lg:w-[58vw]">
                 <a href="/doacao" style={{ display: "block" }}>
                   <img
-                    src="/static/padrinho.gif"
+                    src="/static/padrinho.webp"
                     style={{
                       marginTop: "32px",
                       width: "100%"

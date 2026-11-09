@@ -167,11 +167,11 @@ export default function PostList({
       >
         <div className="align-center flex flex-row justify-center gap-2 pl-0 pr-5">
           <div className="align-center flex flex-row justify-center gap-2">
-            <img src="/static/eye.png" alt="" className="h-[22px]" />
+            <img src="/static/eye.webp" alt="" className="h-[22px]" />
             <p className="h-[22px]">{view}</p>
           </div>
           <div className="align-center flex flex-row justify-center gap-2">
-            <img src="/static/comment.png" alt="" className="h-[22px]" />
+            <img src="/static/comment.webp" alt="" className="h-[22px]" />
             <p className="h-[22px]">{comments}</p>
           </div>
         </div>

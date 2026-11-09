@@ -18,7 +18,10 @@ async function getCategoryPosts(category) {
 
 export async function generateMetadata({ params }) {
   const data = await getCategoryPosts(params.category);
-  return { title: data.title };
+  return {
+    title: data.title,
+    alternates: { canonical: `/category/${params.category}` }
+  };
 }
 
 export default async function PostDefault({ params }) {

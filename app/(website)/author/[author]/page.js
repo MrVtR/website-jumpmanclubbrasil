@@ -13,7 +13,12 @@ async function getAuthor(slug) {
 
 export async function generateMetadata({ params }) {
   const author = await getAuthor(params.author);
-  return { title: author.title };
+  // Authors have a "name" field (there is no "title"), which left the tab
+  // title empty before.
+  return {
+    title: author.name,
+    alternates: { canonical: `/author/${params.author}` }
+  };
 }
 
 export default async function AuthorPage({ params }) {

@@ -3,6 +3,58 @@ import { motion, useAnimation } from "framer-motion";
 import { SocialIcon } from "react-social-icons";
 import { useEffect } from "react";
 
+// One component per icon, so each one owns its animation controller
+// (hooks can't be called inside a .map() callback).
+function AnimatedIcon({ item, iconSize, pulseSpeed, hoverScale }) {
+  const controls = useAnimation();
+
+  const pulse = () =>
+    controls.start({
+      scale: [1, 1.15, 1],
+      transition: {
+        duration: pulseSpeed,
+        ease: "easeInOut",
+        repeat: Infinity,
+      },
+    });
+
+  // Start the pulse animation when the icon mounts.
+  useEffect(() => {
+    pulse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pulseSpeed]);
+
+  return (
+    <motion.div
+      animate={controls}
+      whileHover={{
+        scale: hoverScale,
+        transition: {
+          type: "spring",
+          stiffness: 400,
+          damping: 10,
+        },
+      }}
+      // Restart the pulse for the icon that was hovered.
+      onHoverEnd={pulse}
+      className="flex items-center justify-center"
+    >
+      <SocialIcon
+        network={item.name}
+        url={item.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          height: iconSize,
+          width: iconSize,
+          transformOrigin: "center",
+          cursor: "pointer",
+        }}
+      />
+    </motion.div>
+  );
+}
+
 const AnimatedSocialIcons = ({
   icons_list_url,
   iconSize = 50,
@@ -11,24 +63,6 @@ const AnimatedSocialIcons = ({
   className = "",
   gridColumns = 3,
 }) => {
-  // Create an individual animation controller for each icon.
-  const controllers = icons_list_url.map(() => useAnimation());
-
-  // Start the pulse animation for each icon when the component mounts.
-  useEffect(() => {
-    controllers.forEach((controls) => {
-      controls.start({
-        scale: [1, 1.15, 1],
-        transition: {
-          duration: pulseSpeed,
-          ease: "easeInOut",
-          repeat: Infinity,
-        },
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pulseSpeed]);
-
   return (
     <div
       className={`grid gap-5 ${className}`}
@@ -38,43 +72,13 @@ const AnimatedSocialIcons = ({
       }}
     >
       {icons_list_url.map((item, index) => (
-        <motion.div
+        <AnimatedIcon
           key={`${item.url}-${index}`}
-          animate={controllers[index]}
-          whileHover={{
-            scale: hoverScale,
-            transition: {
-              type: "spring",
-              stiffness: 400,
-              damping: 10,
-            },
-          }}
-          onHoverEnd={() => {
-            // Only restart the pulse animation for the hovered icon.
-            controllers[index].start({
-              scale: [1, 1.15, 1],
-              transition: {
-                duration: pulseSpeed,
-                ease: "easeInOut",
-                repeat: Infinity,
-              },
-            });
-          }}
-          className="flex items-center justify-center"
-        >
-          <SocialIcon
-            network={item.name}
-            url={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              height: iconSize,
-              width: iconSize,
-              transformOrigin: "center",
-              cursor: "pointer",
-            }}
-          />
-        </motion.div>
+          item={item}
+          iconSize={iconSize}
+          pulseSpeed={pulseSpeed}
+          hoverScale={hoverScale}
+        />
       ))}
     </div>
   );
