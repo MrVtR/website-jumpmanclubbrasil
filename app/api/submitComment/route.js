@@ -3,7 +3,6 @@ import { createClient } from "@sanity/client";
 import { randomUUID } from "crypto";
 import {
   PRIVATE_EMAIL_PREFIX,
-  findThreadRootId,
   normalizeEmail,
   notifyAdmin,
   notifyThreadParticipants
@@ -13,6 +12,7 @@ import {
   encryptEmail,
   hashEmail
 } from "@/lib/emailCrypto";
+import { indexComments, loadPostComments, rootOf } from "@/lib/commentThread";
 
 const client = createClient({
   projectId: process.env.SANITY_STUDIO_PROJECT_ID,
@@ -160,12 +160,17 @@ export async function POST(req) {
 
     // The comment is saved from here on: nothing below may turn this into an
     // error response.
+    // Load the post's comments once: used to find the thread's top-level
+    // comment and to show the thread history in the notification emails.
     let threadId = comment._id;
+    let threadComments = null;
     if (parent) {
       try {
-        threadId = await findThreadRootId(client, postId, parent);
+        threadComments = await loadPostComments(client, postId);
+        const index = indexComments(threadComments);
+        threadId = index.byId.has(parent) ? rootOf(index, parent) : parent;
       } catch (threadError) {
-        console.error("Could not find the thread root:", threadError);
+        console.error("Could not load the thread:", threadError);
         threadId = parent;
       }
     }
@@ -175,7 +180,7 @@ export async function POST(req) {
       await notifyAdmin({
         comment,
         post: context.post,
-        parentComment: context.parent,
+        threadComments,
         authorEmail,
         siteUrl
       });
@@ -221,7 +226,8 @@ export async function POST(req) {
           threadId,
           comment,
           authorEmail,
-          siteUrl
+          siteUrl,
+          threadComments
         });
       } catch (notifyError) {
         console.error("Error sending comment notifications:", notifyError);
