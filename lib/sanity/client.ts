@@ -16,7 +16,9 @@ import {
   postsByYearQuery,
   commentsByPostQuery,
   AllYearsPosts,
+  topPostsQuery,
 } from "./groq";
+import { urlForThumbnail } from "./image";
 import { createClient } from "next-sanity";
 
 if (!projectId) {
@@ -51,6 +53,27 @@ export async function getSettings() {
     return (await client.fetch(configQuery)) || [];
   }
   return [];
+}
+
+/**
+ * The 5 most viewed posts, for the right sidebar. Fetched on the server and
+ * cached with the page (ISR) instead of calling an API route on every visit.
+ * Thumbnails are requested at 2x their display size (110x90).
+ */
+export async function getTopPosts() {
+  if (!client) return [];
+  try {
+    const posts = (await client.fetch(topPostsQuery)) || [];
+    return posts.map(({ mainImage, ...post }) => ({
+      ...post,
+      imageUrl: urlForThumbnail(mainImage, 220, 180),
+      imageAlt: mainImage?.alt || post.title
+    }));
+  } catch (error) {
+    // The sidebar must never break the page.
+    console.error("Could not load the most viewed posts:", error);
+    return [];
+  }
 }
 
 export async function getPostBySlug(slug) {
@@ -130,7 +153,7 @@ export async function searchPosts(query = "") {
   if (client) {
     return (
       (await client.fetch(searchquery, {
-        query: query,
+        searchText: query, // "query" is a reserved key in @sanity/client params
       })) || []
     );
   }

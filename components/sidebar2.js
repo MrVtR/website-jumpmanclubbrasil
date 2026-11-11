@@ -1,24 +1,9 @@
-"use client";
-import { useEffect, useState } from "react";
+// Server component: the "most viewed" list comes from the layout (getTopPosts),
+// already inside the cached page, so no extra request per visit.
 import SpinningCoin from "@/components/SpinningCoin";
 import AnimatedSocialIcons from "@/components/AnimatedSocialIcons";
 
-export default function SidebarRight(props) {
-  const [topPosts, setTopPosts] = useState([]);
-
-  useEffect(() => {
-    const fetchTopPosts = async () => {
-      // Make GET request to the new route to fetch the top 5 most viewed posts
-      const response = await fetch("/api/post/topPosts");
-      if (response.ok) {
-        const posts = await response.json();
-        setTopPosts(posts);
-      }
-    };
-
-    fetchTopPosts();
-  }, []);
-
+export default function SidebarRight({ topPosts = [] }) {
   const years = [
     { year: 2026, url: "/year/2026" },
     { year: 2025, url: "/year/2025" },
@@ -164,22 +149,25 @@ export default function SidebarRight(props) {
           {topPosts.length > 0 ? (
             topPosts.map((post) => (
               <a
-                key={post.slug.current}
-                href={`/post/${post.slug.current}`}
+                key={post.slug}
+                href={`/post/${post.slug}`}
                 className="no-underline"
               >
                 <div
                   className="flex items-center justify-start gap-4 border-b-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
                   style={{ paddingLeft: "10px" }}
                 >
-                  {/* Main Image */}
-                  {/* Main Image */}
                   <div className="h-[90px] w-[110px] flex-shrink-0 overflow-hidden rounded-md">
-                    <img
-                      src={post.imageUrl}
-                      alt={post.mainImage?.alt || post.title}
-                      className="h-full w-full object-cover"
-                    />
+                    {post.imageUrl && (
+                      <img
+                        src={post.imageUrl}
+                        alt={post.imageAlt}
+                        width={110}
+                        height={90}
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
+                    )}
                   </div>
 
                   {/* Post Title */}
@@ -191,7 +179,7 @@ export default function SidebarRight(props) {
             ))
           ) : (
             <p className="text-gray-500 dark:text-gray-400">
-              Carregando postagens...
+              Nenhuma postagem ainda.
             </p>
           )}
         </div>

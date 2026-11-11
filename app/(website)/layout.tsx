@@ -2,7 +2,7 @@ import "@/styles/tailwind.css";
 import { Providers } from "./providers";
 import { cx } from "@/utils/all";
 import { Inter, Lora, Open_Sans } from "next/font/google";
-import { getSettings } from "@/lib/sanity/client";
+import { getSettings, getTopPosts } from "@/lib/sanity/client";
 import Footer from "@/components/footer";
 import GetNavbar from "@/components/getnavbar";
 import { urlForImage } from "@/lib/sanity/image";
@@ -108,7 +108,10 @@ export default async function Layout({
   children: React.ReactNode;
   params: any;
 }) {
-  const settings = await getSettings();
+  const [settings, topPosts] = await Promise.all([
+    getSettings(),
+    getTopPosts()
+  ]);
   return (
     <html
       lang="pt-BR"
@@ -123,6 +126,7 @@ export default async function Layout({
             <a href="/" style={{ display: "block", width: "90%" }}>
               <img
                 src="/static/moldura.webp"
+                alt="JumpmanClub Brasil Traduções — página inicial"
                 style={{ marginTop: "10px", width: "100%" }}
               />
             </a>
@@ -132,6 +136,7 @@ export default async function Layout({
                 <a href="/doacao" style={{ display: "block" }}>
                   <img
                     src="/static/padrinho.webp"
+                    alt="Faça uma doação"
                     style={{
                       marginTop: "32px",
                       width: "100%"
@@ -141,7 +146,7 @@ export default async function Layout({
                 
                 {children}
               </div>
-              <SidebarRight />
+              <SidebarRight topPosts={topPosts} />
             </div>
 
             <Footer {...settings} />

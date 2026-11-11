@@ -62,7 +62,6 @@ export async function POST(req: NextRequest) {
         purge("/category/[category]", "page");
         purge("/author/[author]", "page");
         purge("/year/[year]", "page");
-        purge("/api/post/topPosts");
         break;
       case "category":
         purge("/category/[category]", "page");

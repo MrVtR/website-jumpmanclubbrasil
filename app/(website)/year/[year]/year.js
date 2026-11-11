@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Container from "@/components/container";
 import PostList from "@/components/postlist";
-import Sidebar from "@/components/sidebar2";
 
 export default function Year(props) {
   const { posts, year } = props;

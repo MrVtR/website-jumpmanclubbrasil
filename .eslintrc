@@ -3,7 +3,8 @@
   "rules": {
     "react/jsx-no-target-blank": [2, { "allowReferrer": true }],
     "react/display-name": [0, { "ignoreTranspilerName": false }],
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "@next/next/no-img-element": "off"
   },
   "overrides": [
     {
