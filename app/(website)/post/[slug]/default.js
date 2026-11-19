@@ -11,6 +11,7 @@ import CategoryLabel from "@/components/blog/category";
 import AuthorCard from "@/components/blog/authorCard";
 import { getPostBySlug, getCommentsByPostId } from "@/lib/sanity/client";
 import CommentSection from "@/components/CommentSection";
+import ScreenshotGallery from "@/components/blog/screenshotGallery";
 
 const STATIC_IMAGES = [
   {
@@ -236,6 +237,18 @@ export default function Post(props) {
                 ))}
             </div>
             {post.body2 && <PortableText value={post.body2} />}
+            {post.screenshots?.some(image => image?.asset) && (
+              <>
+                <img
+                  src="/static/screenshots.webp"
+                  alt="Screenshots"
+                  width={567}
+                  height={197}
+                  loading="lazy"
+                />
+                <ScreenshotGallery images={post.screenshots} />
+              </>
+            )}
             {post.downloadLink1 && (
               <img src="/static/baixar.webp" alt="DownloadLabel" />
             )}
